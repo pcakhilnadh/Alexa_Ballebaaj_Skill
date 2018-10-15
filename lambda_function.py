@@ -1,8 +1,7 @@
 import json
 import random
-
 """
-Deveoped by Pc
+Developed by Pc
 Current Version : 1.0 v
 
 Features Expected in Next Update
@@ -90,12 +89,14 @@ def instructionIntent(event,context):
     return conversation("Instruction", msg,session_attributes)
 
 def continueIntent(event,context):
-    GendabaajScore=random.randint(30,55)
-    session_attributes=setStartSession(event,context)
-    session_attributes['GendabaajScore']=GendabaajScore
+    session_attributes=setStartSession(event,context) #Get Session
     msg="Lets Play Ballebaj Game. "
-    msg+="We, Gendabaaj has finished batting. You need to attain "+str(GendabaajScore)+" Score to beat us from 2 overs. "
-    msg+="Select your Ballebaj runs from 0 to 6 on every bowl. "
+    if 'GendabaajScore' not in session_attributes:
+        GendabaajScore=random.randint(30,55)
+        session_attributes['GendabaajScore']=GendabaajScore
+        msg+="We, Gendabaaj has finished batting. You need to attain "+str(GendabaajScore)+" Score to beat us from 2 overs. "
+        msg+="Select your Ballebaj runs from 0 to 6 on every bowl. "
+
     msg+="Lets Begin ! Are you Ready to  chase us ? Say start "
     return conversation("GameBegins", msg,session_attributes)
 
@@ -148,10 +149,16 @@ def ballebajShotIntent(event,context):
                         return stopIntent(event,context,msg)
                 else:
                     msg+="Bowl "+str(session_attributes['bowl'])+" of "+str(session_attributes['over'])+" Over. "
-                    msg+=" Belle Bele Ballebaj, Say 'Runs' : "
+                    msg+=" Belle Bele Ballebaj, Say 'Runs' "
     else:
         msg="Please say 'Runs 5' if you expect to take 5 runs in the bowl."
     return conversation("Ballebaj Shot",msg,session_attributes)
+
+def gameScoreIntent(event,context):
+    session_attributes=setStartSession(event,context) #Get Session
+    msg="Ballebaaj scored "+str(session_attributes['BallebajScore'])+" runs."
+    msg+=" You Need "+str(session_attributes['GendabaajScore']-session_attributes['BallebajScore']+1)+" runs to win the game"
+    return conversation("Total Score",msg,session_attributes)
 
 #Routing
 def intent_router(event, context):
@@ -164,6 +171,8 @@ def intent_router(event, context):
         return gameBeginIntent(event,context)
     if intent == "BallebajShot":
         return ballebajShotIntent(event,context)
+    if intent == "gameScore":
+        return gameScoreIntent(event,context)
 
     if intent=="AMAZON.FallbackIntent":
         return fallbackIntent(event,context)
