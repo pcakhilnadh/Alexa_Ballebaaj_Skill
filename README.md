@@ -1,12 +1,12 @@
 # Amazon Alexa Skill - Bellebaaj Skill
 
-### Images of Intents and slots
-![Intent](Intents_Image.png)
+### Preview Video
+![Video](https://www.youtube.com/watch?v=3g2DfZUan9U)
 
-#### Possible uttarances used
+### Presentation
+![PPt](Sample_Ballebaaj Presentation.pptx)
 
-**invocation**
+#### Invocation
 
-> Alexa, open beleebaaj
+Alexa, open ballebaaj
 
-**uttarances**
