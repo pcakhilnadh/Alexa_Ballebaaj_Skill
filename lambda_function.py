@@ -53,6 +53,14 @@ def setStartSession(event,context):
         session_attributes['sessionStatus']=True
     return session_attributes
 
+#Built-In Intents
+def fallbackIntent(event,context):
+    session_attributes=setStartSession(event,context)
+    return conversation("FallBack","That was an Error. Say 'instruction' to listen to instructions.",session_attributes)
+def helpIntent(event,context):
+    session_attributes=setStartSession(event,context)
+    return conversation("Help","help Intent",session_attributes)
+
 #Custom Intent
 def instructionIntent(event,context):
     session_attributes=setStartSession(event,context)
@@ -73,7 +81,7 @@ def continueIntent(event,context):
     msg="Lets Play Ballebaj Game. "
     msg+="We, Gendabaaj has finished batting. You need to attain "+str(GendabaajScore)+" Score to beat us from 6 overs. "
     msg+="Select your Ballebaj Shot from 0 to 6 on every bowl. "
-    msg+="Lets Begin ! Are you Ready to  chase us ? "
+    msg+="Lets Begin ! Are you Ready to  chase us ? Say start "
     return conversation("GameBegins", msg,session_attributes)
 
 def gameBeginIntent(event,context):
@@ -88,9 +96,28 @@ def gameBeginIntent(event,context):
         session_attributes['bat']['1']['score']=0
         session_attributes['bat']['1']['bowls']=0
     msg=str(session_attributes['bowl'])+" Bowl of "+str(session_attributes['over'])+" Over. "
-    msg+=" Belle Bele Ballebaj, Pick your Ballebaj Shot : "
+    msg+=" Belle Bele Ballebaj, Say 'Runs' : "
     return conversation("Ballebaj Begins", msg,session_attributes)
 
+def ballebajShotIntent(event,context):
+    session_attributes=setStartSession(event,context) #Get Session
+    slot=event['request']['intent']['slots']['runs']
+    if 'value' in slot:
+        runs=int(slot['value'])
+        if runs not in range(0,7):
+            msg="Please choose a runs from 0 to 6 from a bowl"
+        else:
+            BowlRun=random.randint(0,6)
+            msg="Gendabaaj Bowl is "+str(BowlRun)+". "
+            if BowlRun == runs:
+                msg+="Sorry You Lost a Wicket."
+            else:
+                msg+="That was a nice shot. You got "+str(runs)+" Runs"
+
+
+    else:
+        msg="Please say 'Runs 5' if you expect to take 5 runs in the bowl."
+    return conversation("Ballebaj Shot",msg,session_attributes)
 
 #Routing
 def intent_router(event, context):
@@ -101,6 +128,13 @@ def intent_router(event, context):
         return continueIntent(event,context)
     if intent == "GameBegins":
         return gameBeginIntent(event,context)
+    if intent == "BallebajShot":
+        return ballebajShotIntent(event,context)
+
+    if intent=="AMAZON.FallbackIntent":
+        return fallbackIntent(event,context)
+    if intent=="AMAZON.HelpIntent":
+        return helpIntent(event,context)
 
 # On Launch
 def on_launch(event, context):
