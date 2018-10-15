@@ -64,8 +64,8 @@ def instructionIntent(event,context):
     msg+="If both numbers happens to be same . You will loose a wicket. "
     msg+="If Both numbers are different, then you will get that much number of Score. "
     msg+="Say 'Instruction' to Repeat. Say 'Continue' to Start Playing Ballebaj  Game "
-
     return conversation("Instruction", msg,session_attributes)
+
 def continueIntent(event,context):
     GendabaajScore=random.randint(50,180)
     session_attributes=setStartSession(event,context)
@@ -76,6 +76,22 @@ def continueIntent(event,context):
     msg+="Lets Begin ! Are you Ready to  chase us ? "
     return conversation("GameBegins", msg,session_attributes)
 
+def gameBeginIntent(event,context):
+    session_attributes=setStartSession(event,context) #Get Session
+    if 'BallebajScore' not in session_attributes:
+        session_attributes['BallebajScore']=0
+        session_attributes['over']=1
+        session_attributes['bowl']=1
+        session_attributes['bat']={}
+        session_attributes['bat']['1']={}
+        session_attributes['bat']['1']['status']="BATING"
+        session_attributes['bat']['1']['score']=0
+        session_attributes['bat']['1']['bowls']=0
+    msg=str(session_attributes['bowl'])+" Bowl of "+str(session_attributes['over'])+" Over. "
+    msg+=" Belle Bele Ballebaj, Pick your Ballebaj Shot : "
+    return conversation("Ballebaj Begins", msg,session_attributes)
+
+
 #Routing
 def intent_router(event, context):
     intent = event['request']['intent']['name']
@@ -83,6 +99,8 @@ def intent_router(event, context):
         return instructionIntent(event,context)
     if intent == "Continue":
         return continueIntent(event,context)
+    if intent == "GameBegins":
+        return gameBeginIntent(event,context)
 
 # On Launch
 def on_launch(event, context):
