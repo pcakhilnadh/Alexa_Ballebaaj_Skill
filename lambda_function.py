@@ -113,14 +113,26 @@ def ballebajShotIntent(event,context):
             BowlRun=random.randint(0,6)
             msg="Gendabaaj Bowl is "+str(BowlRun)+". "
             if BowlRun == runs:
-                msg+="Sorry You Lost a Wicket."
+                msg+="Sorry You Lost a Wicket. "
                 return stopIntent(event,context,msg)
             else:
-                msg+="That was a nice shot. You got "+str(runs)+" Runs"
+                msg+="That was a nice shot. You got "+str(runs)+" Runs. "
                 session_attributes['BallebajScore']+=runs
                 session_attributes['bat']['1']['score']+=runs
                 session_attributes['bat']['1']['bowls']+=1
-
+                session_attributes['bowl']+=1
+                if session_attributes['bowl']%6 == 0:
+                    session_attributes['over']+=1
+                    if session_attributes['over'] <=2:
+                        msg+="Ballebaaj Team scored "+str(session_attributes['BallebajScore'])+" runs in last over."
+                        msg+=str(session_attributes['GendabaajScore']-session_attributes['GendabaajScore']+1)+" more runs needed to win"
+                    else:
+                        msg+="2 overs are over"
+                        msg+="Ballebaaj Team scored "+str(session_attributes['BallebajScore'])+" runs in Total."
+                        return stopIntent(event,context,msg)
+                else:
+                    msg+="Bowl "+str(session_attributes['bowl'])+" of "+str(session_attributes['over'])+" Over. "
+                    msg+=" Belle Bele Ballebaj, Say 'Runs' : "
     else:
         msg="Please say 'Runs 5' if you expect to take 5 runs in the bowl."
     return conversation("Ballebaj Shot",msg,session_attributes)
