@@ -1,4 +1,5 @@
 import json
+import random
 
 # Builders
 def build_PlainSpeech(body):
@@ -55,11 +56,24 @@ def setStartSession(event,context):
 #Custom Intent
 def instructionIntent(event,context):
     session_attributes=setStartSession(event,context)
-    msg="Instruction "+str(session_attributes['sessionStatus'])
+    msg="Ballebaj Instruction. "
+    msg+="We , Team 'Gendabaaj' has finished batting. Now, You need to chase our score to win. "
+    msg+="You have got 6 overs and 3 wickets to beat us. "
+    msg+="You need to pick and say a number from 0 to 6 which you think you could possibly take in every bowl. It is called Bellebaj shot. "
+    msg+="Similarly, We 'Gendabaaj', the bowling team will also select the bowling number called Gendabaaj bowl. "
+    msg+="If both numbers happens to be same . You will loose a wicket. "
+    msg+="If Both numbers are different, then you will get that much number of Score. "
+    msg+="Say 'Instruction' to Repeat. Say 'Continue' to Start Playing Ballebaj  Game "
+
     return conversation("Instruction", msg,session_attributes)
 def continueIntent(event,context):
+    GendabaajScore=random.randint(50,180)
     session_attributes=setStartSession(event,context)
-    msg="Continue "+str(session_attributes['sessionStatus'])
+    session_attributes['GendabaajScore']=GendabaajScore
+    msg="Lets Play Ballebaj Game. "
+    msg+="We, Gendabaaj has finished batting. You need to attain "+str(GendabaajScore)+" Score to beat us from 6 overs. "
+    msg+="Select your Ballebaj Shot from 0 to 6 on every bowl. "
+    msg+="Lets Begin ! Are you Ready to  chase us ? "
     return conversation("GameBegins", msg,session_attributes)
 
 #Routing
