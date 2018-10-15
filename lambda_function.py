@@ -60,13 +60,16 @@ def fallbackIntent(event,context):
 def helpIntent(event,context):
     session_attributes=setStartSession(event,context)
     return conversation("Help","help Intent",session_attributes)
+def stopIntent(event,context,msg=''):
+    msg+="You Lost the Game. Better Luck Next Time"
+    return statement("End",msg)
 
 #Custom Intent
 def instructionIntent(event,context):
     session_attributes=setStartSession(event,context)
     msg="Ballebaj Instruction. "
     msg+="We , Team 'Gendabaaj' has finished batting. Now, You need to chase our score to win. "
-    msg+="You have got 6 overs and 3 wickets to beat us. "
+    msg+="You have got 2 overs and 1 wicket to beat us. "
     msg+="You need to pick and say a number from 0 to 6 which you think you could possibly take in every bowl. It is called Bellebaj shot. "
     msg+="Similarly, We 'Gendabaaj', the bowling team will also select the bowling number called Gendabaaj bowl. "
     msg+="If both numbers happens to be same . You will loose a wicket. "
@@ -75,11 +78,11 @@ def instructionIntent(event,context):
     return conversation("Instruction", msg,session_attributes)
 
 def continueIntent(event,context):
-    GendabaajScore=random.randint(50,180)
+    GendabaajScore=random.randint(30,70)
     session_attributes=setStartSession(event,context)
     session_attributes['GendabaajScore']=GendabaajScore
     msg="Lets Play Ballebaj Game. "
-    msg+="We, Gendabaaj has finished batting. You need to attain "+str(GendabaajScore)+" Score to beat us from 6 overs. "
+    msg+="We, Gendabaaj has finished batting. You need to attain "+str(GendabaajScore)+" Score to beat us from 2 overs. "
     msg+="Select your Ballebaj Shot from 0 to 6 on every bowl. "
     msg+="Lets Begin ! Are you Ready to  chase us ? Say start "
     return conversation("GameBegins", msg,session_attributes)
@@ -105,15 +108,18 @@ def ballebajShotIntent(event,context):
     if 'value' in slot:
         runs=int(slot['value'])
         if runs not in range(0,7):
-            msg="Please choose a runs from 0 to 6 from a bowl"
+            msg="Please choose a runs from 0 to 6 from a bowl."
         else:
             BowlRun=random.randint(0,6)
             msg="Gendabaaj Bowl is "+str(BowlRun)+". "
             if BowlRun == runs:
                 msg+="Sorry You Lost a Wicket."
+                return stopIntent(event,context,msg)
             else:
                 msg+="That was a nice shot. You got "+str(runs)+" Runs"
-
+                session_attributes['BallebajScore']+=runs
+                session_attributes['bat']['1']['score']+=runs
+                session_attributes['bat']['1']['bowls']+=1
 
     else:
         msg="Please say 'Runs 5' if you expect to take 5 runs in the bowl."
@@ -135,13 +141,15 @@ def intent_router(event, context):
         return fallbackIntent(event,context)
     if intent=="AMAZON.HelpIntent":
         return helpIntent(event,context)
+    if intent=="AMAZON.StopIntent":
+        return stopIntent(event,context)
 
 # On Launch
 def on_launch(event, context):
-    msg="Welcome to Ballebaj Game. You need to bat and attain a certain target to win the game. You have got 6 overs and 3 wickets. "
+    msg="Welcome to Ballebaaj Game. You need to bat and attain a certain target to win the game. You have got 2 overs and 1 wickets. "
     msg+="If you want to listen to Instruction say 'Instruction' else say 'Continue'"
     session_attributes=setStartSession(event,context)
-    return conversation("Ballebaj Launch", msg,session_attributes)
+    return conversation("Ballebaaj Launch", msg,session_attributes)
 
 # Main - Entry
 def lambda_handler(event, context):
