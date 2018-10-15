@@ -1,6 +1,15 @@
 import json
 import random
 
+"""
+Deveoped by Pc
+Current Version : 1.0 v
+
+Features Expected in Next Update
+1. gameplay modifed to 3 wickets and 6 overs
+2. Special music and sounds if person got Duck , centuary or fifty.
+
+"""
 # Builders
 def build_PlainSpeech(body):
     speech = {}
@@ -61,8 +70,11 @@ def helpIntent(event,context):
     session_attributes=setStartSession(event,context)
     return conversation("Help","help Intent",session_attributes)
 def stopIntent(event,context,msg=''):
-    msg+="You Lost the Game. Better Luck Next Time"
+    msg+=" You Lost the Game. Better Luck Next Time"
     return statement("End",msg)
+def winner(event,context,msg=''):
+    msg+=" Congratulations ! You won the game."
+    return statement("Winner",msg)
 
 #Custom Intent
 def instructionIntent(event,context):
@@ -70,20 +82,20 @@ def instructionIntent(event,context):
     msg="Ballebaj Instruction. "
     msg+="We , Team 'Gendabaaj' has finished batting. Now, You need to chase our score to win. "
     msg+="You have got 2 overs and 1 wicket to beat us. "
-    msg+="You need to pick and say a number from 0 to 6 which you think you could possibly take in every bowl. It is called Bellebaj shot. "
+    msg+="You need to pick and say a number from 0 to 6 which you think you could possibly take in every bowl. It is called Ballebaaj runs. "
     msg+="Similarly, We 'Gendabaaj', the bowling team will also select the bowling number called Gendabaaj bowl. "
     msg+="If both numbers happens to be same . You will loose a wicket. "
-    msg+="If Both numbers are different, then you will get that much number of Score. "
+    msg+="If Both numbers are different, then you will get that much number of runs. "
     msg+="Say 'Instruction' to Repeat. Say 'Continue' to Start Playing Ballebaj  Game "
     return conversation("Instruction", msg,session_attributes)
 
 def continueIntent(event,context):
-    GendabaajScore=random.randint(30,70)
+    GendabaajScore=random.randint(30,55)
     session_attributes=setStartSession(event,context)
     session_attributes['GendabaajScore']=GendabaajScore
     msg="Lets Play Ballebaj Game. "
     msg+="We, Gendabaaj has finished batting. You need to attain "+str(GendabaajScore)+" Score to beat us from 2 overs. "
-    msg+="Select your Ballebaj Shot from 0 to 6 on every bowl. "
+    msg+="Select your Ballebaj runs from 0 to 6 on every bowl. "
     msg+="Lets Begin ! Are you Ready to  chase us ? Say start "
     return conversation("GameBegins", msg,session_attributes)
 
@@ -111,7 +123,7 @@ def ballebajShotIntent(event,context):
             msg="Please choose a runs from 0 to 6 from a bowl."
         else:
             BowlRun=random.randint(0,6)
-            msg="Gendabaaj Bowl is "+str(BowlRun)+". "
+            msg="Gendabaaj Bowled score was "+str(BowlRun)+". "
             if BowlRun == runs:
                 msg+="Sorry You Lost a Wicket. "
                 return stopIntent(event,context,msg)
@@ -121,11 +133,15 @@ def ballebajShotIntent(event,context):
                 session_attributes['bat']['1']['score']+=runs
                 session_attributes['bat']['1']['bowls']+=1
                 session_attributes['bowl']+=1
+                if session_attributes['BallebajScore'] >session_attributes['GendabaajScore']:
+                    msg+=" You beat us by "+str(session_attributes['BallebajScore']-session_attributes['GendabaajScore'])+" runs."
+                    return winner(event,context,msg)
                 if session_attributes['bowl']%6 == 0:
                     session_attributes['over']+=1
+                    session_attributes['bowl']=1
                     if session_attributes['over'] <=2:
-                        msg+="Ballebaaj Team scored "+str(session_attributes['BallebajScore'])+" runs in last over."
-                        msg+=str(session_attributes['GendabaajScore']-session_attributes['GendabaajScore']+1)+" more runs needed to win"
+                        msg+="Ballebaaj Team scored "+str(session_attributes['BallebajScore'])+" runs in Total."
+                        msg+=" You need "+str(session_attributes['GendabaajScore']-session_attributes['BallebajScore']+1)+" more runs needed to win"
                     else:
                         msg+="2 overs are over"
                         msg+="Ballebaaj Team scored "+str(session_attributes['BallebajScore'])+" runs in Total."
