@@ -4,7 +4,7 @@
 https://www.youtube.com/watch?v=3g2DfZUan9U
 
 ### Presentation
-![PPt](/Sample_Ballebaaj Presentation.pptx)
+https://github.com/itzpc/Alexa_Ballebaaj_Skill/blob/master/Sample_Ballebaaj%20Presentation.pptx
 
 #### Invocation
 
