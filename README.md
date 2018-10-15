@@ -1,10 +1,10 @@
 # Amazon Alexa Skill - Bellebaaj Skill
 
 ### Preview Video
-![Video](https://www.youtube.com/watch?v=3g2DfZUan9U)
+https://www.youtube.com/watch?v=3g2DfZUan9U
 
 ### Presentation
-![PPt](Sample_Ballebaaj Presentation.pptx)
+![PPt](/Sample_Ballebaaj Presentation.pptx)
 
 #### Invocation
 
