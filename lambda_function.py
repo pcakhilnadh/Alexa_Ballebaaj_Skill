@@ -1,14 +1,6 @@
 import json
 import random
-"""
-Developed by Pc
-Current Version : 1.0 v
 
-Features Expected in Next Update
-1. gameplay modifed to 3 wickets and 6 overs
-2. Special music and sounds if person got Duck , centuary or fifty.
-
-"""
 # Builders
 def build_PlainSpeech(body):
     speech = {}
@@ -96,8 +88,10 @@ def continueIntent(event,context):
         session_attributes['GendabaajScore']=GendabaajScore
         msg+="We, Gendabaaj has finished batting. You need to attain "+str(GendabaajScore)+" Score to beat us from 2 overs. "
         msg+="Select your Ballebaj runs from 0 to 6 on every bowl. "
-
-    msg+="Lets Begin ! Are you Ready to  chase us ? Say start "
+        msg+="Lets Begin ! Are you Ready to  chase us ?  "
+    else:
+        msg+="Need "+str(session_attributes['GendabaajScore']-session_attributes['BallebajScore']+1)+" More Runs to Win. Are you ready to chase us ?"
+    msg+="Say 'Lets begin the game'"
     return conversation("GameBegins", msg,session_attributes)
 
 def gameBeginIntent(event,context):
@@ -143,6 +137,8 @@ def ballebajShotIntent(event,context):
                     if session_attributes['over'] <=2:
                         msg+="Ballebaaj Team scored "+str(session_attributes['BallebajScore'])+" runs in Total."
                         msg+=" You need "+str(session_attributes['GendabaajScore']-session_attributes['BallebajScore']+1)+" more runs needed to win"
+                        msg+="Bowl "+str(session_attributes['bowl'])+" of "+str(session_attributes['over'])+" Over. "
+                        msg+=" Belle Bele Ballebaj, Say 'Runs' "
                     else:
                         msg+="2 overs are over"
                         msg+="Ballebaaj Team scored "+str(session_attributes['BallebajScore'])+" runs in Total."
@@ -157,7 +153,7 @@ def ballebajShotIntent(event,context):
 def gameScoreIntent(event,context):
     session_attributes=setStartSession(event,context) #Get Session
     msg="Ballebaaj scored "+str(session_attributes['BallebajScore'])+" runs."
-    msg+=" You Need "+str(session_attributes['GendabaajScore']-session_attributes['BallebajScore']+1)+" runs to win the game"
+    msg+=" You Need "+str(session_attributes['GendabaajScore']-session_attributes['BallebajScore']+1)+" runs to win the game. Say 'continue' to continue the game else say 'stop'"
     return conversation("Total Score",msg,session_attributes)
 
 #Routing
@@ -180,6 +176,13 @@ def intent_router(event, context):
         return helpIntent(event,context)
     if intent=="AMAZON.StopIntent":
         return stopIntent(event,context)
+    if intent=="AMAZON.CancelIntent":
+        return stopIntent(event,context)
+    if intent=="AMAZON.NavigateHomeIntent":
+        return gameBeginIntent(event,context)
+    if intent=="AMAZON.HelpIntent":
+        return instructionIntent(event,context)
+
 
 # On Launch
 def on_launch(event, context):
