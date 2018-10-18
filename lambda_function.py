@@ -70,7 +70,7 @@ def winner(event,context,msg=''):
 #Custom Intent
 def instructionIntent(event,context):
     session_attributes=setStartSession(event,context)
-    msg="Ballebaj Instruction. "
+    msg="Ballebaaj - Voice Cricket Game, Instructions. "
     msg+="We , Team 'Gendabaaj' has finished batting. Now, You need to chase our score to win. "
     msg+="You have got 2 overs and 1 wicket to beat us. "
     msg+="You need to pick and say a number from 0 to 6 which you think you could possibly take in every bowl. It is called Ballebaaj runs. "
@@ -117,12 +117,13 @@ def ballebajShotIntent(event,context):
         if runs not in range(0,7):
             msg="Please choose a runs from 0 to 6 from a bowl."
         else:
-            BowlRun=random.randint(0,6)
-            msg="Gendabaaj Bowled score was "+str(BowlRun)+". "
+            BowlRun=random.randint(1,6)
             if BowlRun == runs:
-                msg+="Sorry You Lost a Wicket. "
+                msg="Gendabaaj also Bowled "+str(BowlRun)+". "
+                msg+="Sorry You Lost the wicket. "
                 return stopIntent(event,context,msg)
             else:
+                msg="Gendabaaj Bowled "+str(BowlRun)+". "
                 msg+="That was a nice shot. You got "+str(runs)+" Runs. "
                 session_attributes['BallebajScore']+=runs
                 session_attributes['bat']['1']['score']+=runs
@@ -131,12 +132,13 @@ def ballebajShotIntent(event,context):
                 if session_attributes['BallebajScore'] >session_attributes['GendabaajScore']:
                     msg+=" You beat us by "+str(session_attributes['BallebajScore']-session_attributes['GendabaajScore'])+" runs."
                     return winner(event,context,msg)
-                if session_attributes['bowl']%6 == 0:
+                if session_attributes['bowl']%7 == 0:
                     session_attributes['over']+=1
                     session_attributes['bowl']=1
                     if session_attributes['over'] <=2:
+                        msg+=" It is the end of an over. "
                         msg+="Ballebaaj Team scored "+str(session_attributes['BallebajScore'])+" runs in Total."
-                        msg+=" You need "+str(session_attributes['GendabaajScore']-session_attributes['BallebajScore']+1)+" more runs needed to win"
+                        msg+=" You need "+str(session_attributes['GendabaajScore']-session_attributes['BallebajScore']+1)+" more runs needed to win. "
                         msg+="Bowl "+str(session_attributes['bowl'])+" of "+str(session_attributes['over'])+" Over. "
                         msg+=" Belle Bele Ballebaj, Say 'Runs' "
                     else:
@@ -186,10 +188,10 @@ def intent_router(event, context):
 
 # On Launch
 def on_launch(event, context):
-    msg="Welcome to Ballebaaj Game. You need to bat and attain a certain target to win the game. You have got 2 overs and 1 wickets. "
+    msg="Welcome to 'Ballebaaj - Voice Cricket Game. You need to bat and attain a certain target to win the game. You have got 2 overs and 1 wickets. "
     msg+="If you want to listen to Instruction say 'Instruction' else say 'Continue'"
-    session_attributes=setStartSession(event,context)
-    return conversation("Ballebaaj Launch", msg,session_attributes)
+    #session_attributes=setStartSession(event,context)
+    return conversation("Ballebaaj Launch", msg,{})
 
 # Main - Entry
 def lambda_handler(event, context):
