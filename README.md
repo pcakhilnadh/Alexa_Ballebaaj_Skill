@@ -8,5 +8,5 @@ https://github.com/itzpc/Alexa_Ballebaaj_Skill/blob/master/Sample_Ballebaaj%20Pr
 
 #### Invocation
 
-Alexa, open ballebaaj cricket game
+Alexa, open voice cricket 
 
